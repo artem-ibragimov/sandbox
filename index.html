@@ -1,8 +1,48 @@
 <html>
-   <head>
 
-   </head>
-   <body>
-      <script src='./game.js'></script>
-   </body>
+<head>
+   <script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script>
+   <title>Игра крестики-нолики</title>
+</head>
+
+<body>
+   <pre>
+      Написать крестики-нолики на JS для работы в консоли на поле 3х3.
+      Состояние игры храним в любом доступном хранилище браузера.
+      Все оформить в ООП стиле. 
+      Какие должны быть команды в консоли: 
+         1. Начать игру 
+         2. Сделать ход (указываем номер ячейки и тип). 
+            После каждого хода отображаем результат хода: 
+               2.1. если успех то п.4. 
+               2.2. если ошибка, то ошибку. 
+         3. Завершить игру 
+         4. Отрисовать текущее состояние. 
+         5. About - выводим информацию об авторе и пр.
+      </pre>
+   <script>
+      const global = (1, eval)('this');
+      about();
+      requirejs(['src/Game'], (Game) => {
+         help();
+         global.start = () => {
+            const game = new Game.default();
+            global.set = game.set.bind(game);
+            global.end = game.end.bind(game);
+         }
+      });
+
+      function about() {
+         console.log(`Консольная игра крестики нолики. Автор Ибрагимов А.А.`);
+      };
+      function help() {
+         console.log(`
+         start() - начало игры
+         set('o|x', row, column) - установить 'o' или 'x' в строке row, столбце column (индексация с нуля)
+         end() - закончить игру
+         about() - интро`);
+      }
+   </script>
+</body>
+
 </html>
