@@ -1,0 +1,79 @@
+{
+    "extends": "tslint:recommended",
+    "rules": {
+        "object-literal-sort-keys":false,
+        "no-reference": false,
+        "no-var-requires": true,
+        "cyclomatic-complexity": [
+            true,
+            15
+        ],
+        "eofline": true,
+        "indent": [
+            true,
+            "spaces",
+            4
+        ],
+        "linebreak-style": [
+            true,
+            "CRLF"
+        ],
+        "max-classes-per-file": [
+            false,
+            3
+        ],
+        "max-line-length": [
+            false,
+            120
+        ],
+        "no-default-export": false,
+        "no-namespace": false,
+        "no-mergeable-namespace": true,
+        "no-trailing-whitespace": true,
+        "no-string-literal":false,
+        "curly": true,
+        "no-console":false,
+        "no-arg": true,
+        "no-conditional-assignment": true,
+        "no-debugger": true,
+        "no-duplicate-variable": true,
+        "no-eval": true,
+        "use-isnan": true,
+        "whitespace": [
+            true,
+            "check-separator",
+            "check-decl",
+            "check-typecast",
+            "check-type",
+            "check-module",
+            "check-operator",
+            "check-branch"
+        ],
+        "one-variable-per-declaration": [
+            true,
+            "ignore-for-loop"
+        ],
+        "object-literal-shorthand": true,
+        "no-consecutive-blank-lines": true,
+        "array-type": false,
+        "jsdoc-format": true,
+        "comment-format": [
+            true,
+            "check-space"
+        ],
+        "align": [
+            true,
+            "parameters",
+            "statements"
+        ],
+        "member-ordering": false,
+        "member-access": false,
+        "quotemark": false,
+        "variable-name": [
+            false,
+            "lowerCamelCase",
+            "allow-leading-underscore"
+        ],
+        "forin": false
+    }
+}

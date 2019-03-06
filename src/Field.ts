@@ -1,19 +1,27 @@
 /// <amd-module name='src/Field' />
 
 export default class Field {
-   _field: Array<Array<Marker | void>> = [];
 
    /** Имеется ли выигрышная комбинация */
    isDone: boolean = false;
    /** Поле полностью заполненно */
    isFull: boolean = false;
+   /** Максимальный индекс маркера */
+   maxIndex: number = 0;
+   /** Поле, где ставятся маркеры */
+   private _field: Array<Array<Marker | null>> = [];
+
+   get field() {
+      return this._field;
+   }
 
    set field(value) {
       if (!value || !Array.isArray(value) || !Array.isArray(value[0])) {
-         throw new Error('field должен быть двумерным массивом!')
+         throw new Error('field должен быть двумерным массивом!');
       }
       this._field = value;
    }
+
    /**
     * @param {Number} length размер игрового поля
     * @constructor
@@ -22,35 +30,41 @@ export default class Field {
       if (!length || length < 1) {
          throw new Error(`Некорректный размер поля '${length}'!`);
       }
-      this._field = Array.from({ length }, () => Array.from({ length }, () => void 0));
+      this.maxIndex = length - 1;
+      this._field = Array.from({ length }, () => Array.from({ length }, () => null));
    }
 
    set(marker: Marker, row: number, column: number) {
-      if (row > this.length || column > this.length) {
+      if (row > this.maxIndex || column > this.maxIndex) {
          throw new Error(`Выход за границы поля ${this.length}x${this.length}`);
       }
-      if (this.isDone || this.isFull){
-         throw new Error('Игра окончена!')
+      if (this.isDone || this.isFull) {
+         throw new Error('Игра окончена!');
+      }
+      if (this._field[row][column]) {
+         throw new Error(`Ячейка занята символом ${this._field[row][column]}!`);
       }
       this._field[row][column] = marker;
       this.isDone = this._checkIsDone();
       this.isFull = this._checkIsFull();
    }
+
    print(): void {
       console.table(this._field);
    }
 
    toString() {
-      return JSON.stringify(this._field, null, 3);
+      return JSON.stringify(this._field);
    }
 
    fromString(str) {
       this.field = JSON.parse(str);
+      return this.field;
    }
 
    /** Проверка, что все поле заполненно */
    _checkIsFull(): boolean {
-      return this._field.every((row) => row.every((cell) => cell !== void 0));
+      return this._field.every((row) => row.every((cell) => cell !== null));
    }
 
    /** Проверка выигрышной комбинации */
@@ -66,8 +80,8 @@ export default class Field {
    /** Проверка вертикального выигрышной комбинации */
    get _isVerticalDone(): boolean {
       for (let column = 0; column < this.length; column++) {
-         const topColumnEl: Marker | void = this._field[0][column];
-         if (!topColumnEl) { return false; }
+         const topColumnEl: Marker | null = this._field[0][column];
+         if (!topColumnEl) { continue; }
          let verticalDone = true;
          for (let row = 0; row < this.length; row++) {
             if (this._field[row][column] !== topColumnEl) {
@@ -83,27 +97,20 @@ export default class Field {
    /** Проверка диагональной выигрышной комбинации */
    get _isDiagonalDone(): boolean {
       const topLeftEl = this._field[0][0];
-      const topRightEl = this._field[this.length - 1][this.length - 1];
+      const topRightEl = this._field[0][this.maxIndex];
 
-      if (!topLeftEl || !topRightEl) { return false; }
+      if (!topLeftEl && !topRightEl) { return false; }
 
-      let leftDiagonalDone = true;
-      let rightDiagonalDone = true;
+      let rightDiagonalDone = (topRightEl !== null);
+      let leftDiagonalDone = (topLeftEl !== null);
 
       for (let i = 0; i < this.length; i++) {
-         if (this._field[i][i] !== topLeftEl) {
-            leftDiagonalDone = false;
-            break;
-         }
+         leftDiagonalDone = leftDiagonalDone && (this._field[i][i] === topLeftEl);
+         rightDiagonalDone = rightDiagonalDone && (this._field[i][this.maxIndex - i] === topRightEl);
+         if (!leftDiagonalDone && !rightDiagonalDone) { return false; }
       }
-      for (let i = this.length - 1; i >= 0; i--) {
-         if (this._field[i][i] !== topRightEl) {
-            rightDiagonalDone = false;
-            break
-         }
-      }
-      return leftDiagonalDone || rightDiagonalDone;
+      return true;
    }
 }
 
-export type Marker = 'o' | 'x'
+export type Marker = 'o' | 'x';

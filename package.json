@@ -1,6 +1,19 @@
 {
-  "dependencies": {
+  "scripts": {
+    "compile": "tsc",
+    "pretest": "npm run compile",
+    "test": "mocha tests\\requireTests.js",
+    "clean": "git clean -fxd",
+    "lint": "tslint --fix -p ./"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
     "global": "^4.3.2",
-    "typescript": "^3.3.3333"
+    "mocha": "^6.0.2",
+    "requirejs": "^2.3.6",
+    "typescript": "^3.3.3333",
+    "@types/chai": "^4.1.7",
+    "@types/mocha": "^5.2.6",
+    "tslint": "^5.13.1"
   }
 }

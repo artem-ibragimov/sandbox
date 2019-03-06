@@ -2,10 +2,15 @@
    "compilerOptions": {
       "module": "amd",
       "target": "es2016",
-      "jsx": "preserve"
+      "jsx": "preserve",
+      "pretty": false,
+      "typeRoots": [
+         "node_modules/@types"
+      ]
    },
    "include": [
-      "src"
+      "src",
+      "tests"
    ],
    "exclude": [
       "node_modules",
