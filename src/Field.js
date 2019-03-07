@@ -1,5 +1,4 @@
-/// <amd-module name='src/Field' />
-define("src/Field", ["require", "exports"], function (require, exports) {
+define("src/Field", ["require", "exports", "src/Const"], function (require, exports, Const_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class Field {
@@ -7,8 +6,9 @@ define("src/Field", ["require", "exports"], function (require, exports) {
          * @param {Number} length размер игрового поля
          * @constructor
          */
-        constructor(length) {
+        constructor(length, markerValues) {
             this.length = length;
+            this.markerValues = markerValues;
             /** Имеется ли выигрышная комбинация */
             this.isDone = false;
             /** Поле полностью заполненно */
@@ -18,7 +18,7 @@ define("src/Field", ["require", "exports"], function (require, exports) {
             /** Поле, где ставятся маркеры */
             this._field = [];
             if (!length || length < 1) {
-                throw new Error(`Некорректный размер поля '${length}'!`);
+                throw new Error(Const_1.ERROR.FIELD.INCORRECT_RANGE(length));
             }
             this.maxIndex = length - 1;
             this._field = Array.from({ length }, () => Array.from({ length }, () => null));
@@ -28,19 +28,25 @@ define("src/Field", ["require", "exports"], function (require, exports) {
         }
         set field(value) {
             if (!value || !Array.isArray(value) || !Array.isArray(value[0])) {
-                throw new Error('field должен быть двумерным массивом!');
+                throw new Error(Const_1.ERROR.FIELD.INCORRECT_FIELD);
             }
             this._field = value;
         }
         set(marker, row, column) {
             if (row > this.maxIndex || column > this.maxIndex) {
-                throw new Error(`Выход за границы поля ${this.length}x${this.length}`);
+                throw new Error(Const_1.ERROR.FIELD.OUT_OF_RANGE(this.length));
             }
-            if (this.isDone || this.isFull) {
-                throw new Error('Игра окончена!');
+            if (!this.markerValues.includes(marker)) {
+                throw new Error(Const_1.ERROR.FIELD.WRONG_MARKER(marker, JSON.stringify(this.markerValues)));
+            }
+            if (this.isDone) {
+                throw new Error(Const_1.ERROR.GAME.HAVE_CHAMPION);
+            }
+            if (this.isFull) {
+                throw new Error(Const_1.ERROR.FIELD.FULLFILLED);
             }
             if (this._field[row][column]) {
-                throw new Error(`Ячейка занята символом ${this._field[row][column]}!`);
+                throw new Error(Const_1.ERROR.FIELD.CELL_FILLED(this._field[row][column]));
             }
             this._field[row][column] = marker;
             this.isDone = this._checkIsDone();
@@ -50,10 +56,16 @@ define("src/Field", ["require", "exports"], function (require, exports) {
             console.table(this._field);
         }
         toString() {
-            return JSON.stringify(this._field);
+            const data = {
+                isDone: this.isDone,
+                isFull: this.isFull,
+                field: this._field,
+            };
+            return JSON.stringify(data);
         }
         fromString(str) {
-            this.field = JSON.parse(str);
+            const data = JSON.parse(str);
+            Object.keys(data).forEach((prop) => this[prop] = data[prop]);
             return this.field;
         }
         /** Проверка, что все поле заполненно */

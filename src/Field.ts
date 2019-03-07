@@ -1,7 +1,7 @@
 /// <amd-module name='src/Field' />
+import { ERROR } from 'src/Const';
 
 export default class Field {
-
    /** Имеется ли выигрышная комбинация */
    isDone: boolean = false;
    /** Поле полностью заполненно */
@@ -9,7 +9,7 @@ export default class Field {
    /** Максимальный индекс маркера */
    maxIndex: number = 0;
    /** Поле, где ставятся маркеры */
-   private _field: Array<Array<Marker | null>> = [];
+   private _field: DataField = [];
 
    get field() {
       return this._field;
@@ -17,7 +17,7 @@ export default class Field {
 
    set field(value) {
       if (!value || !Array.isArray(value) || !Array.isArray(value[0])) {
-         throw new Error('field должен быть двумерным массивом!');
+         throw new Error(ERROR.FIELD.INCORRECT_FIELD);
       }
       this._field = value;
    }
@@ -26,23 +26,29 @@ export default class Field {
     * @param {Number} length размер игрового поля
     * @constructor
     */
-   constructor(private length: number) {
+   constructor(private length: number, private markerValues: Array<any>) {
       if (!length || length < 1) {
-         throw new Error(`Некорректный размер поля '${length}'!`);
+         throw new Error(ERROR.FIELD.INCORRECT_RANGE(length));
       }
       this.maxIndex = length - 1;
       this._field = Array.from({ length }, () => Array.from({ length }, () => null));
    }
 
-   set(marker: Marker, row: number, column: number) {
+   set(marker, row: number, column: number) {
       if (row > this.maxIndex || column > this.maxIndex) {
-         throw new Error(`Выход за границы поля ${this.length}x${this.length}`);
+         throw new Error(ERROR.FIELD.OUT_OF_RANGE(this.length));
       }
-      if (this.isDone || this.isFull) {
-         throw new Error('Игра окончена!');
+      if (!this.markerValues.includes(marker)) {
+         throw new Error(ERROR.FIELD.WRONG_MARKER(marker, JSON.stringify(this.markerValues)));
+      }
+      if (this.isDone) {
+         throw new Error(ERROR.GAME.HAVE_CHAMPION);
+      }
+      if (this.isFull) {
+         throw new Error(ERROR.FIELD.FULLFILLED);
       }
       if (this._field[row][column]) {
-         throw new Error(`Ячейка занята символом ${this._field[row][column]}!`);
+         throw new Error(ERROR.FIELD.CELL_FILLED(this._field[row][column]));
       }
       this._field[row][column] = marker;
       this.isDone = this._checkIsDone();
@@ -54,11 +60,17 @@ export default class Field {
    }
 
    toString() {
-      return JSON.stringify(this._field);
+      const data: ISerializedData = {
+         isDone: this.isDone,
+         isFull: this.isFull,
+         field: this._field,
+      };
+      return JSON.stringify(data);
    }
 
    fromString(str) {
-      this.field = JSON.parse(str);
+      const data: ISerializedData = JSON.parse(str);
+      Object.keys(data).forEach((prop) => this[prop] = data[prop]);
       return this.field;
    }
 
@@ -80,7 +92,7 @@ export default class Field {
    /** Проверка вертикального выигрышной комбинации */
    get _isVerticalDone(): boolean {
       for (let column = 0; column < this.length; column++) {
-         const topColumnEl: Marker | null = this._field[0][column];
+         const topColumnEl = this._field[0][column];
          if (!topColumnEl) { continue; }
          let verticalDone = true;
          for (let row = 0; row < this.length; row++) {
@@ -112,5 +124,10 @@ export default class Field {
       return true;
    }
 }
+type DataField = Array<Array<any | null>>;
 
-export type Marker = 'o' | 'x';
+interface ISerializedData {
+   isDone: boolean;
+   isFull: boolean;
+   field: DataField;
+}

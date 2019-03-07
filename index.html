@@ -20,25 +20,50 @@
          4. Отрисовать текущее состояние. 
          5. About - выводим информацию об авторе и пр.
       </pre>
+
    <script>
-      const global = (1, eval)('this');
+      let game;
+      let start = noGameLoaded;
+      let show = noGameCommand;
+      let end = noGameCommand;
+      let set = noGameCommand;
+
       about();
       requirejs(['src/Game'], (Game) => {
-         help();
-         global.start = () => {
-            const game = new Game.default();
-            global.set = game.set.bind(game);
-            global.end = game.end.bind(game);
+         start = () => {
+            if (game) {
+               console.error('Текущая игра незавершена! Введите end()');
+               return;
+            }
+            game = new Game.default();
+            show = game.show.bind(game);
+            set = (...args) => {
+               const action = game.set.apply(game, args);
+               show();
+               action instanceof Error ? console.error(action) : console.log(action);
+            }
+            end = () => {
+               game.end.call(game);
+               game = null;
+               set = noGameCommand;
+            }
          }
       });
-
+      
       function about() {
-         console.log(`Консольная игра крестики нолики. Автор Ибрагимов А.А.`);
-      };
+         console.log('Консольная игра крестики нолики. Введите `help()` для справки. Автор Ибрагимов А.А.');
+      }
+      function noGameLoaded() {
+         console.error('Модуль игры не загружен');
+      }
+      function noGameCommand() {
+         console.error('Необходимо начать игру. Введите `start()`.');
+      }
       function help() {
          console.log(`
          start() - начало игры
          set('o|x', row, column) - установить 'o' или 'x' в строке row, столбце column (индексация с нуля)
+         show() - отобразить игровое поле
          end() - закончить игру
          about() - интро`);
       }
