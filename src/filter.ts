@@ -1,11 +1,8 @@
+/// <amd-module name='src/filter' />
 import { IPredicate } from 'src/predicate';
 
-export const filterIf: IFilter = (preds) => (elems) => {
-   return Promise.resolve(preds.reduce((elems, pred) => elems.filter(pred), elems));
-};
+export const filterIf: IConditionalFilter = (preds) => (elems) => preds.reduce((elems, pred) => elems.filter(pred), elems);
+export const ignoreIf: IConditionalFilter = (preds) => filterIf(preds.map((p) => (s) => !p(s)));
 
-export const ignoreIf: IFilter = (preds) => {
-   return filterIf(preds.map((p) => (s) => !p(s)));
-};
-
-type IFilter = (ps: IPredicate[]) => (elems: string[]) => Promise<string[]>;
+type IConditionalFilter = <T>(preds: IPredicate<T>[]) => IFilter<T>;
+type IFilter<T> = (elems: T[]) => T[];
