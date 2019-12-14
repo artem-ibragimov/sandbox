@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "compile": "tsc",
-    "pretest": "npm run compile",
+    "build": "tsc",
+    "pretest": "npm run build",
     "test": "mocha tests/requireTests.js",
     "clean": "git clean -fxd",
     "lint": "tslint --fix -p ./"

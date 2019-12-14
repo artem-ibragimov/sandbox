@@ -3,7 +3,7 @@ import { countAll, createCounter } from 'src/counter';
 import { ignoreIf } from 'src/filter';
 import { createIsLenLess, createIsOneOf, isHashTag, isHtmlTag, isWord } from 'src/predicate';
 
-export default function (html: string, cfg = {}, callback: (res, err: Error) => void) {
+export default function(html: string, cfg = {}, callback: (res, err: Error) => void) {
     if (!html) {
         callback({}, new Error('First argument is invalid!'));
     }

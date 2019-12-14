@@ -14,7 +14,7 @@ describe('src/parser', () => {
          `]: {
             cfg: {
                forbidden: ['if', 'in', 'at', 'be', '‘ll'],
-               minWordLength: 2
+               minWordLength: 2,
             },
             result: {
                [STRING_COLLECTOINS.hashtags]: {},
@@ -25,12 +25,12 @@ describe('src/parser', () => {
                   'home': 1,
                   'monday': 1,
                   '10pm': 1,
-                  'will':1,
-                  'happy': 1
-               }
+                  'will': 1,
+                  'happy': 1,
+               },
 
             },
-         }
+         },
       };
       Object.keys(tests).forEach((test) => {
          it(test, (done) => {
