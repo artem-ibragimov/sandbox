@@ -3,8 +3,11 @@
 import { IPredicate } from 'src/predicate';
 import { filterIf } from 'src/filter';
 
-export const createCounter: ICounterCreator = (label: string) => (preds) => (elems) =>
-   Object.defineProperty({}, label, { value: countIf(preds)(elems) });
+export const createCounter: ILabelCounter = (label: string) => (preds) =>
+   (elems) => ({ [label]: countIf(preds)(elems) });
+
+export const countAll = (results: ILabelCounterResult[]): ILabelCounterResult =>
+   Object.assign({}, ...results);
 
 export const countIf: IConditionalCounter = (preds) =>
    (elems) => count(filterIf(preds)(elems));
@@ -15,11 +18,12 @@ export const count = <T extends ICounterKey>(elems: T[]): ICounterResult =>
       return res;
    }, {});
 
-type ICounterCreator = <T extends ICounterKey>(label: string) =>
-   (preds: IPredicate<T>[]) =>
-      (elems: T[]) => {
-         [label: string]: ICounterResult;
-      };
+type ILabelCounter = <T extends ICounterKey>(label: string) =>
+   (preds: IPredicate<T>[]) => (elems: T[]) => ILabelCounterResult;
+
+interface ILabelCounterResult {
+   [label: string]: ICounterResult;
+};
 
 type IConditionalCounter = <T extends ICounterKey>(preds: IPredicate<T>[]) => ICounter<T>;
 type ICounter<T extends ICounterKey> = (elems: T[]) => ICounterResult;
