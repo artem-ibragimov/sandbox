@@ -21,7 +21,7 @@ export const count = <T extends ICounterKey>(elems: T[]): ICounterResult =>
 type ILabelCounter = <T extends ICounterKey>(label: string) =>
    (preds: IPredicate<T>[]) => (elems: T[]) => ILabelCounterResult;
 
-interface ILabelCounterResult {
+export interface ILabelCounterResult {
    [label: string]: ICounterResult;
 }
 

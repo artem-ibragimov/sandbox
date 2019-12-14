@@ -3,16 +3,20 @@ import { countAll, createCounter } from 'src/counter';
 import { ignoreIf } from 'src/filter';
 import { createIsLenLess, createIsOneOf, isHashTag, isHtmlTag, isWord } from 'src/predicate';
 
-export default function(str: string, cfg = {}, callback: (res, err: Error) => void) {
-    if (!str) {
+export default function (html: string, cfg = {}, callback: (res, err: Error) => void) {
+    if (!html) {
         callback({}, new Error('First argument is invalid!'));
     }
-    const data = Promise.resolve(str.split(' '));
     const STRING_DEFAULT_CFG: IParseConfig<string> = {
         minWordLength: 2,
         forbidden: ['global vars', 'mutable state', 'side effects'],
     };
-    parseStrings(data, { ...STRING_DEFAULT_CFG, ...cfg })
+    const sentences = html.split(/<[^>]*>/);
+    const words = sentences.reduce((prev, s) => prev.concat(s.split(' ')), []);
+    const strings = words
+        .filter((s) => s.length !== 0 && s !== '\n')
+        .map((s) => s.replace(/[\n|\.|\!|\?|\,]/g, '').toLowerCase());
+    parseStrings(Promise.resolve(strings), { ...STRING_DEFAULT_CFG, ...cfg })
         .then((res) => { callback(res, null); })
         .catch((e: Error) => callback(null, e));
 }
@@ -41,7 +45,7 @@ enum STRING_COLLECTOINS {
 }
 export { parseStrings, STRING_COLLECTOINS };
 
-interface IParseConfig<T> {
+export interface IParseConfig<T> {
     minWordLength?: number;
     forbidden?: T[];
 }
