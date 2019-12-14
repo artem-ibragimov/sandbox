@@ -1,16 +1,16 @@
 /// <amd-module name='src/parser' />
-import { createCounter, countAll } from 'src/counter';
+import { countAll, createCounter } from 'src/counter';
 import { ignoreIf } from 'src/filter';
 import { createIsLenLess, createIsOneOf, isHashTag, isHtmlTag, isWord } from 'src/predicate';
 
-export default function (str: string, cfg = {}, callback: (res, err: Error) => void) {
+export default function(str: string, cfg = {}, callback: (res, err: Error) => void) {
     if (!str) {
         callback({}, new Error('First argument is invalid!'));
     }
     const data = Promise.resolve(str.split(' '));
     const STRING_DEFAULT_CFG: IParseConfig<string> = {
         minWordLength: 2,
-        forbidden: ['global vars', 'mutable state', 'side effects']
+        forbidden: ['global vars', 'mutable state', 'side effects'],
     };
     parseStrings(data, { ...STRING_DEFAULT_CFG, ...cfg })
         .then((res) => { callback(res, null); })
@@ -32,12 +32,12 @@ function parseStrings(elems: Promise<string[]>, cfg: IParseConfig<string> = {}) 
         .then((filtered) =>
             countAll([
                 countHashTags(filtered),
-                countWords(filtered)
+                countWords(filtered),
             ]));
 }
 enum STRING_COLLECTOINS {
     words = 'words',
-    hashtags = 'hashtags'
+    hashtags = 'hashtags',
 }
 export { parseStrings, STRING_COLLECTOINS };
 

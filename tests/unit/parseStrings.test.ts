@@ -17,7 +17,7 @@ describe('src/parser', () => {
          const data = Promise.resolve(['one', 'two', 'two']);
          return parseStrings(data).then((results) => {
             const { [STRING_COLLECTOINS.words]: words } = results;
-            assert.deepEqual(words, { 'one': 1, 'two': 2 });
+            assert.deepEqual(words, { one: 1, two: 2 });
          });
       });
 
@@ -25,7 +25,7 @@ describe('src/parser', () => {
          const data = Promise.resolve(['1', '22', '333', '1', '22']);
          return parseStrings(data, { minWordLength: 2 }).then((results) => {
             const { [STRING_COLLECTOINS.words]: words } = results;
-            assert.deepEqual(words, { '22': 2, '333': 1 });
+            assert.deepEqual(words, { 22: 2, 333: 1 });
          });
       });
 
@@ -33,7 +33,7 @@ describe('src/parser', () => {
          const data = Promise.resolve(['1', '22', '333', '1', '4444']);
          return parseStrings(data, { forbidden: ['1', '4444'] }).then((results) => {
             const { [STRING_COLLECTOINS.words]: words } = results;
-            assert.deepEqual(words, { '22': 1, '333': 1 });
+            assert.deepEqual(words, { 22: 1, 333: 1 });
          });
       });
 

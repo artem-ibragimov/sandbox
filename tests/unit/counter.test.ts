@@ -14,7 +14,7 @@ describe('src/counter', () => {
 
     describe('countAll', () => {
         it('counts several results', () => {
-            const words = { words: { 'foo': 2, 'bar': 1 } };
+            const words = { words: { foo: 2, bar: 1 } };
             const numbers = { numbers: { 5: 2, 0: 4 } };
             assert.deepEqual(countAll([words, numbers]), { ...words, ...numbers });
         });
@@ -22,7 +22,7 @@ describe('src/counter', () => {
 
     describe('countIf', () => {
         it('without predicates', () => {
-            assert.deepEqual(countIf([])([1, 2, "word"]), { '1': 1, '2': 1, 'word': 1 });
+            assert.deepEqual(countIf([])([1, 2, "word"]), { 1: 1, 2: 1, word: 1 });
         });
 
         it('with predicates', () => {

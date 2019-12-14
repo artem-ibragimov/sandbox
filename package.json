@@ -2,7 +2,7 @@
   "scripts": {
     "compile": "tsc",
     "pretest": "npm run compile",
-    "test": "mocha tests\\requireTests.js",
+    "test": "mocha tests/requireTests.js",
     "clean": "git clean -fxd",
     "lint": "tslint --fix -p ./"
   },

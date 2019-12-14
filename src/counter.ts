@@ -1,7 +1,7 @@
 /// <amd-module name='src/counter' />
 
-import { IPredicate } from 'src/predicate';
 import { filterIf } from 'src/filter';
+import { IPredicate } from 'src/predicate';
 
 export const createCounter: ILabelCounter = (label: string) => (preds) =>
    (elems) => ({ [label]: countIf(preds)(elems) });
@@ -23,7 +23,7 @@ type ILabelCounter = <T extends ICounterKey>(label: string) =>
 
 interface ILabelCounterResult {
    [label: string]: ICounterResult;
-};
+}
 
 type IConditionalCounter = <T extends ICounterKey>(preds: IPredicate<T>[]) => ICounter<T>;
 type ICounter<T extends ICounterKey> = (elems: T[]) => ICounterResult;

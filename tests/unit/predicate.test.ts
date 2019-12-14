@@ -1,6 +1,6 @@
 import { assert } from 'chai';
 import 'mocha';
-import { isHashTag, isHtmlTag, isWord, createIsLenLess, createIsOneOf } from 'src/predicate';
+import { createIsLenLess, createIsOneOf, isHashTag, isHtmlTag, isWord } from 'src/predicate';
 
 describe('src/predicate', () => {
    describe('isHashTag', () => {
